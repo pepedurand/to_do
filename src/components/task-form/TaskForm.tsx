@@ -7,19 +7,36 @@ interface TaskFormProps {
   buttonText: string;
   taskList: TaskData[];
   setTaskList?: React.Dispatch<React.SetStateAction<TaskData[]>>;
+  taskToUpdate?: TaskData | undefined;
+  handleUpdate?(id: number, title: string, difficulty: number): void;
 }
 
 export const TaskForm = ({
   buttonText,
   taskList,
   setTaskList,
+  taskToUpdate,
+  handleUpdate,
 }: TaskFormProps) => {
   const { form, onChange, cleanFields } = useForm({
     title: "",
     difficulty: "",
   });
 
+  if (taskToUpdate) {
+    form.title = taskToUpdate.title;
+    form.difficulty = taskToUpdate.difficulty;
+  }
+
   const addTaskHandler = (event: FormEvent<HTMLFormElement>) => {
+    if (handleUpdate) {
+      handleUpdate(
+        form.title,
+        form.difficulty,
+        Math.floor(Math.random() * 1000)
+      );
+    } else {
+    }
     event.preventDefault();
     const id = Math.floor(Math.random() * 1000);
 
@@ -31,7 +48,6 @@ export const TaskForm = ({
 
     setTaskList!([...taskList, newTask]);
     cleanFields();
-    console.log(taskList);
   };
 
   return (
